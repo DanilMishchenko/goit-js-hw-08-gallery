@@ -11,8 +11,8 @@ const imagesCards = createImageCards(galleryImages);
 
 refs.galleryList.insertAdjacentHTML('beforeend', imagesCards);
 refs.galleryList.addEventListener('click', onGalleryContainerClick);
-refs.modalCloseBtn.addEventListener('click', isCloseModalImage);
-refs.modalOverlay.addEventListener('click', isCloseModalImage)
+refs.modalCloseBtn.addEventListener('click', isCloseModalImageClick);
+refs.modalOverlay.addEventListener('click', onOverlayClick)
 
 function createImageCards(galleryImages) {
     return galleryImages
@@ -37,19 +37,33 @@ function createImageCards(galleryImages) {
 
 function onGalleryContainerClick(e) {
     e.preventDefault();
+    window.addEventListener('keydown', onCloseKeyPress)
     const isImageEl = !e.target.classList.contains('gallery__image');
     if (isImageEl) {
         return;
     };
     refs.lightbox.classList.add('is-open');
-    const lightboxImageDataAttribute = e.target.getAttribute('data-source');
-    const lightboxImageAlt = e.target.getAttribute('alt');
-    refs.modalImg.setAttribute('src', lightboxImageDataAttribute);
-    refs.modalImg.setAttribute('alt', lightboxImageAlt);
+    setAttributeImage(e.target.getAttribute('data-source'), e.target.getAttribute('alt'))
 };
 
-function isCloseModalImage() {
-    refs.lightbox.classList.remove('is-open');
-    refs.modalImg.setAttribute('src', '');
-    refs.modalImg.setAttribute('alt', '');
+function setAttributeImage(src, alt) {
+    refs.modalImg.src = src;
+    refs.modalImg.alt = alt;
 }
+
+function isCloseModalImageClick() {
+    refs.lightbox.classList.remove('is-open');
+    setAttributeImage('','')
+}
+
+function onOverlayClick(e) {
+    if (e.currentTarget === e.target) {
+        isCloseModalImageClick();
+    }
+};
+
+function onCloseKeyPress(e) {
+    if (e.code === 'Escape') {
+        isCloseModalImageClick();
+    }
+};
